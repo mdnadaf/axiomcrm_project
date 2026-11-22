@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="pagination(pageData, baseUrl)" th:if="${pageData != null and pageData.totalPages > 1}" aria-label="Page navigation" class="mt-3">
+    <ul class="pagination justify-content-center">
+        <!-- Previous -->
+        <li class="page-item" th:classappend="${pageData.first} ? 'disabled'">
+            <a class="page-link" th:href="@{${baseUrl}(page=${pageData.number - 1}, size=${pageData.size}, search=${search})}">
+                &laquo; Prev
+            </a>
+        </li>
+
+        <!-- Page Numbers -->
+        <li th:each="i : ${#numbers.sequence(0, pageData.totalPages - 1)}"
+            class="page-item" th:classappend="${i == pageData.number} ? 'active'">
+            <a class="page-link" th:href="@{${baseUrl}(page=${i}, size=${pageData.size}, search=${search})}"
+               th:text="${i + 1}">1</a>
+        </li>
+
+        <!-- Next -->
+        <li class="page-item" th:classappend="${pageData.last} ? 'disabled'">
+            <a class="page-link" th:href="@{${baseUrl}(page=${pageData.number + 1}, size=${pageData.size}, search=${search})}">
+                Next &raquo;
+            </a>
+        </li>
+    </ul>
+</nav>
+</body>
+</html>

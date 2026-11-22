@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - AcxiomCRM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container-fluid px-4 flex-grow-1">
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <!-- Header & Date Filter -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="h3 fw-bold mb-1">CRM Dashboard</h2>
+            <p class="text-muted mb-0">
+                Logged in as <strong sec:authentication="name">User</strong>
+                (<span class="badge bg-primary" sec:authentication="principal.role">ROLE</span>)
+                &bull; Scope: <span th:text="${scopeUser == null ? 'All Records (Team Scope)' : 'Assigned Records Only'}">Scope</span>
+            </p>
+        </div>
+        <div class="btn-group shadow-sm mt-2 mt-md-0" role="group" aria-label="Date filter">
+            <a th:href="@{/dashboard(dateFilter='TODAY')}" class="btn btn-outline-primary" th:classappend="${dateFilter == 'TODAY'} ? 'active'">Today</a>
+            <a th:href="@{/dashboard(dateFilter='THIS_WEEK')}" class="btn btn-outline-primary" th:classappend="${dateFilter == 'THIS_WEEK'} ? 'active'">This Week</a>
+            <a th:href="@{/dashboard(dateFilter='THIS_MONTH')}" class="btn btn-outline-primary" th:classappend="${dateFilter == 'THIS_MONTH' or dateFilter == null} ? 'active'">This Month</a>
+            <a th:href="@{/dashboard(dateFilter='CUSTOM')}" class="btn btn-outline-primary" th:classappend="${dateFilter == 'CUSTOM'} ? 'active'">All Time</a>
+        </div>
+    </div>
+
+    <!-- 9 KPI Cards (Grid) -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card stat-card border-start border-4 border-primary h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold">Total Customers</div>
+                            <div class="h2 fw-bold text-primary mb-0" th:text="${dashboard.totalCustomers}">0</div>
+                        </div>
+                        <i class="bi bi-people text-primary fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card stat-card border-start border-4 border-info h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold">Total Leads</div>
+                            <div class="h2 fw-bold text-info mb-0" th:text="${dashboard.totalLeads}">0</div>
+                        </div>
+                        <i class="bi bi-funnel text-info fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card stat-card border-start border-4 border-warning h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold">Open Leads</div>
+                            <div class="h2 fw-bold text-warning mb-0" th:text="${dashboard.openLeads}">0</div>
+                        </div>
+                        <i class="bi bi-lightning-charge text-warning fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card stat-card border-start border-4 border-secondary h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold">Total Opportunities</div>
+                            <div class="h2 fw-bold text-secondary mb-0" th:text="${dashboard.totalOpportunities}">0</div>
+                        </div>
+                        <i class="bi bi-briefcase text-secondary fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card stat-card border-start border-4 border-primary h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold">Open Deals</div>
+                            <div class="h2 fw-bold text-primary mb-0" th:text="${dashboard.openOpportunities}">0</div>
+                        </div>
+                        <i class="bi bi-hourglass-split text-primary fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card stat-card border-start border-4 border-success h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold">Won Deals</div>
+                            <div class="h2 fw-bold text-success mb-0" th:text="${dashboard.wonOpportunities}">0</div>
+                        </div>
+                        <i class="bi bi-trophy text-success fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card stat-card border-start border-4 border-danger h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold">Lost Deals</div>
+                            <div class="h2 fw-bold text-danger mb-0" th:text="${dashboard.lostOpportunities}">0</div>
+                        </div>
+                        <i class="bi bi-x-circle text-danger fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card stat-card border-start border-4 border-success h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold">Total Pipeline Value</div>
+                            <div class="h2 fw-bold text-success mb-0" th:text="'$' + ${#numbers.formatDecimal(dashboard.totalPipelineValue, 0, 'COMMA', 2, 'POINT')}">$0.00</div>
+                        </div>
+                        <i class="bi bi-currency-dollar text-success fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row g-4 mb-4">
+        <!-- Lead Status Chart -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-pie-chart-fill text-primary me-2"></i>Lead Status Breakdown</span>
+                </div>
+                <div class="card-body d-flex justify-content-center align-items-center" style="min-height: 280px;">
+                    <canvas id="leadStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opportunity Pipeline by Stage -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-bar-chart-fill text-primary me-2"></i>Opportunity Pipeline by Stage</span>
+                </div>
+                <div class="card-body" style="min-height: 280px;">
+                    <canvas id="pipelineStageChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Sales Trend -->
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-graph-up-arrow text-success me-2"></i>Monthly Won Sales Performance (Annual Trend)</span>
+                </div>
+                <div class="card-body" style="min-height: 250px;">
+                    <canvas id="monthlySalesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // 1. Lead Status Doughnut Chart
+    fetch('/dashboard/chart-data?type=leadStatus')
+        .then(res => res.json())
+        .then(data => {
+            new Chart(document.getElementById('leadStatusChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.data,
+                        backgroundColor: ['#0d6efd', '#0dcaf0', '#198754', '#6c757d', '#20c997', '#dc3545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        });
+
+    // 2. Pipeline Stage Bar Chart
+    fetch('/dashboard/chart-data?type=pipelineStage')
+        .then(res => res.json())
+        .then(data => {
+            new Chart(document.getElementById('pipelineStageChart'), {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: 'Count of Deals',
+                            data: data.counts,
+                            backgroundColor: '#0d6efd',
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Total Value ($)',
+                            data: data.amounts,
+                            backgroundColor: '#20c997',
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { type: 'linear', position: 'left', beginAtZero: true },
+                        y1: { type: 'linear', position: 'right', beginAtZero: true, grid: { drawOnChartArea: false } }
+                    }
+                }
+            });
+        });
+
+    // 3. Monthly Sales Line Chart
+    fetch('/dashboard/chart-data?type=monthlySales')
+        .then(res => res.json())
+        .then(data => {
+            new Chart(document.getElementById('monthlySalesChart'), {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Won Deal Value ($)',
+                        data: data.data,
+                        borderColor: '#198754',
+                        backgroundColor: 'rgba(25, 135, 84, 0.15)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports - AcxiomCRM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container-fluid px-4 flex-grow-1">
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="mb-4">
+        <h2 class="h3 fw-bold mb-1"><i class="bi bi-graph-up me-2 text-primary"></i>CRM Reports & Analytics</h2>
+        <p class="text-muted">Select an operational or executive report to view analytics, filter data, and export to CSV.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Customer Report -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-people text-primary fs-2 me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0 fw-bold">Customer Report</h5>
+                            <small class="text-muted">Master customer registry & status</small>
+                        </div>
+                    </div>
+                    <p class="card-text text-muted small">Analyze active and inactive customer accounts, assigned account managers, and creation timelines.</p>
+                    <a th:href="@{/reports/customers}" class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-table me-1"></i>View Report</a>
+                    <a th:href="@{/reports/customers/export}" class="btn btn-outline-success btn-sm"><i class="bi bi-download me-1"></i>CSV</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lead Report -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-funnel text-info fs-2 me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0 fw-bold">Lead Report</h5>
+                            <small class="text-muted">Lead funnel & sources</small>
+                        </div>
+                    </div>
+                    <p class="card-text text-muted small">Break down leads by status, origin channels, expected deal values, and ownership.</p>
+                    <a th:href="@{/reports/leads}" class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-table me-1"></i>View Report</a>
+                    <a th:href="@{/reports/leads/export}" class="btn btn-outline-success btn-sm"><i class="bi bi-download me-1"></i>CSV</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opportunity Report -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-briefcase text-warning fs-2 me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0 fw-bold">Opportunity Report</h5>
+                            <small class="text-muted">Deal values & close dates</small>
+                        </div>
+                    </div>
+                    <p class="card-text text-muted small">Track stages, win probabilities, total amounts, and expected closing milestones.</p>
+                    <a th:href="@{/reports/opportunities}" class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-table me-1"></i>View Report</a>
+                    <a th:href="@{/reports/opportunities/export}" class="btn btn-outline-success btn-sm"><i class="bi bi-download me-1"></i>CSV</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pipeline Report -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-kanban text-success fs-2 me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0 fw-bold">Pipeline Report</h5>
+                            <small class="text-muted">Stage-wise pipeline value</small>
+                        </div>
+                    </div>
+                    <p class="card-text text-muted small">Executive summary of total and weighted pipeline values aggregated across all stages.</p>
+                    <a th:href="@{/reports/pipeline}" class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-table me-1"></i>View Report</a>
+                    <a th:href="@{/reports/pipeline/export}" class="btn btn-outline-success btn-sm"><i class="bi bi-download me-1"></i>CSV</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conversion Report -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-arrow-repeat text-primary fs-2 me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0 fw-bold">Conversion Report</h5>
+                            <small class="text-muted">Lead-to-customer conversion</small>
+                        </div>
+                    </div>
+                    <p class="card-text text-muted small">Conversion efficiency metrics: converted leads vs lost/open leads, and win rates.</p>
+                    <a th:href="@{/reports/conversion}" class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-table me-1"></i>View Report</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Follow-Up Report -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-calendar-check text-secondary fs-2 me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0 fw-bold">Follow-Up Report</h5>
+                            <small class="text-muted">Activity adherence</small>
+                        </div>
+                    </div>
+                    <p class="card-text text-muted small">Audit planned, completed, and missed follow-ups to track team customer engagement.</p>
+                    <a th:href="@{/reports/followups}" class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-table me-1"></i>View Report</a>
+                    <a th:href="@{/reports/followups/export}" class="btn btn-outline-success btn-sm"><i class="bi bi-download me-1"></i>CSV</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Activity Report -->
+        <div class="col-md-6 col-lg-4" sec:authorize="hasAnyRole('ADMIN','MANAGER')">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-clock-history text-dark fs-2 me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0 fw-bold">User Activity Report</h5>
+                            <small class="text-muted">Sales actions & calls</small>
+                        </div>
+                    </div>
+                    <p class="card-text text-muted small">Analyze team call logs, meetings, emails, and tasks completed across all accounts.</p>
+                    <a th:href="@{/reports/user-activity}" class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-table me-1"></i>View Report</a>
+                    <a th:href="@{/reports/user-activity/export}" class="btn btn-outline-success btn-sm"><i class="bi bi-download me-1"></i>CSV</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audit Report -->
+        <div class="col-md-6 col-lg-4" sec:authorize="hasRole('ADMIN')">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-journal-text text-danger fs-2 me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0 fw-bold">Audit Report</h5>
+                            <small class="text-muted">Security & Compliance</small>
+                        </div>
+                    </div>
+                    <p class="card-text text-muted small">Comprehensive audit history covering logins, lockouts, password resets, and changes.</p>
+                    <a th:href="@{/reports/audit}" class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-table me-1"></i>View Report</a>
+                    <a th:href="@{/reports/audit/export}" class="btn btn-outline-success btn-sm"><i class="bi bi-download me-1"></i>CSV</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

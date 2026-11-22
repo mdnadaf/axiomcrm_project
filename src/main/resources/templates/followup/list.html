@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Follow-Ups - AcxiomCRM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container-fluid px-4 flex-grow-1">
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h3 fw-bold mb-0"><i class="bi bi-calendar-check me-2"></i>Follow-Up Management</h2>
+        <div>
+            <a th:href="@{/followups/pending}" class="btn btn-outline-warning text-dark me-2">Pending</a>
+            <a th:href="@{/followups/overdue}" class="btn btn-outline-danger me-2">Overdue</a>
+            <a th:href="@{/followups/new}" class="btn btn-primary shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i>Schedule Follow-Up
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body">
+            <form th:action="@{/followups}" method="get" class="row g-3 align-items-center">
+                <div class="col-md-3">
+                    <select name="status" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}" th:selected="${selectedStatus == st}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" name="fromDate" class="form-control" th:value="${fromDate}" placeholder="From Date">
+                </div>
+                <div class="col-md-3">
+                    <input type="date" name="toDate" class="form-control" th:value="${toDate}" placeholder="To Date">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-secondary w-100"><i class="bi bi-funnel me-1"></i>Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Related Record</th>
+                        <th>Remarks</th>
+                        <th>Status</th>
+                        <th>Assigned To</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${followups.empty}">
+                        <td colspan="7" class="text-center py-4 text-muted">No follow-ups found.</td>
+                    </tr>
+                    <tr th:each="f : ${followups.content}">
+                        <td class="fw-bold" th:text="${f.followUpDate}">2026-11-25</td>
+                        <td>
+                            <span class="badge bg-light text-dark border font-monospace" th:text="${f.type}">CALL</span>
+                        </td>
+                        <td>
+                            <span th:if="${f.customer != null}">
+                                <i class="bi bi-person me-1"></i><a th:href="@{/customers/{id}(id=${f.customer.id})}" th:text="${f.customer.name}" class="text-decoration-none">Cust</a>
+                            </span>
+                            <span th:if="${f.lead != null}">
+                                <i class="bi bi-funnel me-1"></i><a th:href="@{/leads/{id}(id=${f.lead.id})}" th:text="${f.lead.name}" class="text-decoration-none">Lead</a>
+                            </span>
+                        </td>
+                        <td th:text="${f.remarks != null ? f.remarks : '-'}">-</td>
+                        <td>
+                            <span class="badge" th:classappend="
+                                ${f.status.name() == 'PLANNED'} ? 'bg-primary' : (
+                                ${f.status.name() == 'COMPLETED'} ? 'bg-success' : (
+                                ${f.status.name() == 'MISSED'} ? 'bg-danger' : 'bg-secondary'))"
+                                th:text="${f.status}">PLANNED</span>
+                        </td>
+                        <td th:text="${f.assignedTo != null ? f.assignedTo.fullName : 'Unassigned'}">User</td>
+                        <td class="text-end">
+                            <a th:href="@{/followups/{id}(id=${f.id})}" class="btn btn-sm btn-outline-info me-1" title="View"><i class="bi bi-eye"></i></a>
+                            <a th:href="@{/followups/{id}/edit(id=${f.id})}" class="btn btn-sm btn-outline-primary me-1" title="Edit"><i class="bi bi-pencil"></i></a>
+                            <button type="button" class="btn btn-sm btn-outline-danger" sec:authorize="hasAnyRole('ADMIN','MANAGER')"
+                                    data-bs-toggle="modal" th:data-bs-target="'#deleteModal' + ${f.id}" title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </button>
+
+                            <div class="modal fade text-start" th:id="'deleteModal' + ${f.id}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirm Delete</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete this follow-up?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <form th:action="@{/followups/{id}/delete(id=${f.id})}" method="post">
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div th:replace="~{fragments/pagination :: pagination(${followups}, '/followups')}"></div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

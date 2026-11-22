@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pipeline Report - AcxiomCRM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container-fluid px-4 flex-grow-1">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="h3 fw-bold mb-0"><i class="bi bi-kanban me-2"></i>Sales Pipeline Summary Report</h2>
+            <p class="text-muted mb-0">Stage-wise opportunity count, nominal value, and risk-weighted value</p>
+        </div>
+        <div>
+            <a th:href="@{/reports/pipeline/export}" class="btn btn-outline-success me-2"><i class="bi bi-file-earmark-spreadsheet me-1"></i>Export CSV</a>
+            <a th:href="@{/reports}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Reports Menu</a>
+        </div>
+    </div>
+
+    <!-- Stage Summary Cards -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white fw-bold">Stage Aggregations</div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Pipeline Stage</th>
+                        <th>Opportunities Count</th>
+                        <th>Total Nominal Value</th>
+                        <th>Weighted Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="entry : ${stageSummary}">
+                        <td class="fw-bold"><span class="badge bg-secondary font-monospace" th:text="${entry.key}">STAGE</span></td>
+                        <td th:text="${entry.value.count}">0</td>
+                        <td class="fw-bold text-dark" th:text="'$' + ${#numbers.formatDecimal(entry.value.totalAmount, 0, 'COMMA', 2, 'POINT')}">$0.00</td>
+                        <td class="fw-bold text-success" th:text="'$' + ${#numbers.formatDecimal(entry.value.weightedAmount, 0, 'COMMA', 2, 'POINT')}">$0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Overdue Follow-Ups - AcxiomCRM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container-fluid px-4 flex-grow-1">
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h3 fw-bold mb-0 text-danger"><i class="bi bi-exclamation-octagon me-2"></i>Overdue / Missed Follow-Ups</h2>
+        <div>
+            <a th:href="@{/followups}" class="btn btn-outline-secondary me-2">All Follow-Ups</a>
+            <a th:href="@{/followups/new}" class="btn btn-primary shadow-sm"><i class="bi bi-plus-circle me-1"></i>New Follow-Up</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Related Record</th>
+                        <th>Remarks</th>
+                        <th>Assigned To</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${followups.empty}">
+                        <td colspan="6" class="text-center py-4 text-muted">No overdue or missed follow-ups.</td>
+                    </tr>
+                    <tr th:each="f : ${followups.content}">
+                        <td class="fw-bold text-danger" th:text="${f.followUpDate}">2026-11-20</td>
+                        <td><span class="badge bg-light text-dark border" th:text="${f.type}">CALL</span></td>
+                        <td>
+                            <span th:if="${f.customer != null}"><a th:href="@{/customers/{id}(id=${f.customer.id})}" th:text="${f.customer.name}" class="text-decoration-none">Cust</a></span>
+                            <span th:if="${f.lead != null}"><a th:href="@{/leads/{id}(id=${f.lead.id})}" th:text="${f.lead.name}" class="text-decoration-none">Lead</a></span>
+                        </td>
+                        <td th:text="${f.remarks != null ? f.remarks : '-'}">-</td>
+                        <td th:text="${f.assignedTo != null ? f.assignedTo.fullName : 'Unassigned'}">User</td>
+                        <td class="text-end">
+                            <a th:href="@{/followups/{id}(id=${f.id})}" class="btn btn-sm btn-outline-info"><i class="bi bi-eye"></i> View</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/pagination :: pagination(${followups}, '/followups/overdue')}"></div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

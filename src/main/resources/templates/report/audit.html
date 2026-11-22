@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Audit Report - AcxiomCRM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container-fluid px-4 flex-grow-1">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h3 fw-bold mb-0"><i class="bi bi-journal-text me-2"></i>Executive Audit Report</h2>
+        <div>
+            <a th:href="@{/reports/audit/export}" class="btn btn-outline-success me-2"><i class="bi bi-file-earmark-spreadsheet me-1"></i>Export CSV</a>
+            <a th:href="@{/reports}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Reports Menu</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+                <thead class="table-light">
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Entity</th>
+                        <th>Record ID</th>
+                        <th>Client IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${logs.empty}"><td colspan="6" class="text-center py-3 text-muted">No records.</td></tr>
+                    <tr th:each="l : ${logs.content}">
+                        <td th:text="${#temporals.format(l.createdDate, 'yyyy-MM-dd HH:mm:ss')}">Timestamp</td>
+                        <td class="fw-semibold" th:text="${l.username != null ? l.username : 'SYSTEM'}">Username</td>
+                        <td><span class="badge bg-secondary" th:text="${l.action}">ACTION</span></td>
+                        <td th:text="${l.entityName}">Entity</td>
+                        <td th:text="${l.recordId != null ? l.recordId : '-'}">-</td>
+                        <td class="font-monospace text-muted small" th:text="${l.ipAddress}">IP</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div th:replace="~{fragments/pagination :: pagination(${logs}, '/reports/audit')}"></div>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

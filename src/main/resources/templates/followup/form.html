@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${followUpId != null ? 'Edit Follow-Up' : 'Schedule Follow-Up'} + ' - AcxiomCRM'">Follow-Up Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container py-4 flex-grow-1">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h4 class="mb-0 fw-bold" th:text="${followUpId != null ? 'Edit Follow-Up' : 'Schedule New Follow-Up'}">Schedule Follow-Up</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="${followUpId != null ? '/followups/' + followUpId + '/edit' : '/followups'}"
+                          th:object="${followUpForm}" method="post" class="needs-validation" novalidate>
+
+                        <!-- Global form error message -->
+                        <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}">
+                            <span th:each="err : ${#fields.globalErrors()}" th:text="${err}">Error</span>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="followUpDate" class="form-label">Follow-Up Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="followUpDate" th:field="*{followUpDate}" required>
+                                <div class="invalid-feedback">Follow-up date cannot be earlier than today.</div>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('followUpDate')}" th:errors="*{followUpDate}"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
+                                <select class="form-select" id="type" th:field="*{type}" required>
+                                    <option th:each="t : ${types}" th:value="${t}" th:text="${t}"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                                <select class="form-select" id="status" th:field="*{status}" required>
+                                    <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6" sec:authorize="hasAnyRole('ADMIN','MANAGER')">
+                                <label for="assignedToId" class="form-label">Assigned Executive</label>
+                                <select class="form-select" id="assignedToId" th:field="*{assignedToId}">
+                                    <option value="">-- Select Executive --</option>
+                                    <option th:each="u : ${salesUsers}" th:value="${u.id}" th:text="${u.fullName}"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="customerId" class="form-label">Customer (Optional)</label>
+                                <select class="form-select" id="customerId" th:field="*{customerId}">
+                                    <option value="">-- None --</option>
+                                    <option th:each="c : ${customers}" th:value="${c.id}" th:text="${c.name} + ' (' + ${c.customerCode} + ')'"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="leadId" class="form-label">Lead (Optional)</label>
+                                <select class="form-select" id="leadId" th:field="*{leadId}">
+                                    <option value="">-- None --</option>
+                                    <option th:each="l : ${leads}" th:value="${l.id}" th:text="${l.name} + ' (' + ${l.leadCode} + ')'"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="remarks" class="form-label">Remarks & Agenda</label>
+                                <textarea class="form-control" id="remarks" th:field="*{remarks}" rows="3" placeholder="Agenda or topics for this follow-up..."></textarea>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a th:href="@{/followups}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                                <i class="bi bi-save me-1"></i>Save Follow-Up
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

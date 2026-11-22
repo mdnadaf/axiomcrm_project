@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Follow-Up Details - AcxiomCRM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="h3 fw-bold mb-1">
+                <i class="bi bi-calendar-check me-2 text-primary"></i>Follow-Up Details
+            </h2>
+            <span class="badge bg-light text-dark border font-monospace me-2" th:text="${followUp.type}">CALL</span>
+            <span class="badge" th:classappend="
+                ${followUp.status.name() == 'PLANNED'} ? 'bg-primary' : (
+                ${followUp.status.name() == 'COMPLETED'} ? 'bg-success' : (
+                ${followUp.status.name() == 'MISSED'} ? 'bg-danger' : 'bg-secondary'))"
+                th:text="${followUp.status}">PLANNED</span>
+        </div>
+        <div class="mt-2 mt-md-0 d-flex gap-2">
+            <!-- Complete Modal Trigger -->
+            <button th:if="${followUp.status.name() == 'PLANNED' or followUp.status.name() == 'MISSED'}" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#completeModal">
+                <i class="bi bi-check-lg me-1"></i>Mark Completed
+            </button>
+
+            <!-- Reschedule Modal Trigger -->
+            <button th:if="${followUp.status.name() == 'PLANNED' or followUp.status.name() == 'MISSED'}" type="button" class="btn btn-warning text-dark" data-bs-toggle="modal" data-bs-target="#rescheduleModal">
+                <i class="bi bi-calendar-plus me-1"></i>Reschedule
+            </button>
+
+            <!-- Cancel Button -->
+            <form th:if="${followUp.status.name() == 'PLANNED'}" th:action="@{/followups/{id}/cancel(id=${followUp.id})}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-outline-secondary">Cancel</button>
+            </form>
+
+            <a th:href="@{/followups/{id}/edit(id=${followUp.id})}" class="btn btn-outline-primary">
+                <i class="bi bi-pencil me-1"></i>Edit
+            </a>
+            <a th:href="@{/followups}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back
+            </a>
+        </div>
+    </div>
+
+    <!-- Complete Modal -->
+    <div class="modal fade" id="completeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/followups/{id}/complete(id=${followUp.id})}" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Complete Follow-Up</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="completionNotes" class="form-label">Completion Notes / Meeting Minutes</label>
+                            <textarea class="form-control" id="completionNotes" name="completionNotes" rows="3" required placeholder="Outcome, discussion summary, next steps..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Complete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reschedule Modal -->
+    <div class="modal fade" id="rescheduleModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/followups/{id}/reschedule(id=${followUp.id})}" method="post" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Reschedule Follow-Up</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="newDate" class="form-label">New Follow-Up Date</label>
+                            <input type="date" class="form-control" id="newDate" name="newDate" required>
+                            <div class="invalid-feedback">Follow-up date cannot be earlier than today.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-warning">Reschedule</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Card -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white fw-bold"><i class="bi bi-info-circle me-2 text-primary"></i>Follow-Up Schedule</div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5 text-muted">Follow-Up Date:</dt>
+                        <dd class="col-sm-7 fw-bold" th:text="${followUp.followUpDate}">2026-11-25</dd>
+
+                        <dt class="col-sm-5 text-muted">Type:</dt>
+                        <dd class="col-sm-7" th:text="${followUp.type}">CALL</dd>
+
+                        <dt class="col-sm-5 text-muted">Status:</dt>
+                        <dd class="col-sm-7" th:text="${followUp.status}">PLANNED</dd>
+
+                        <dt class="col-sm-5 text-muted">Remarks:</dt>
+                        <dd class="col-sm-7" th:text="${followUp.remarks != null ? followUp.remarks : '-'}">-</dd>
+
+                        <dt class="col-sm-5 text-muted">Completion Notes:</dt>
+                        <dd class="col-sm-7" th:text="${followUp.completionNotes != null ? followUp.completionNotes : '-'}">-</dd>
+
+                        <dt class="col-sm-5 text-muted">Rescheduled Date:</dt>
+                        <dd class="col-sm-7" th:text="${followUp.rescheduledDate != null ? followUp.rescheduledDate : '-'}">-</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white fw-bold"><i class="bi bi-link-45deg me-2 text-primary"></i>Related CRM Records</div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted">Customer:</dt>
+                        <dd class="col-sm-8">
+                            <span th:if="${followUp.customer != null}">
+                                <a th:href="@{/customers/{id}(id=${followUp.customer.id})}" th:text="${followUp.customer.name}" class="fw-bold text-decoration-none">Cust</a>
+                            </span>
+                            <span th:if="${followUp.customer == null}" class="text-muted">None</span>
+                        </dd>
+
+                        <dt class="col-sm-4 text-muted">Lead:</dt>
+                        <dd class="col-sm-8">
+                            <span th:if="${followUp.lead != null}">
+                                <a th:href="@{/leads/{id}(id=${followUp.lead.id})}" th:text="${followUp.lead.name}" class="fw-bold text-decoration-none">Lead</a>
+                            </span>
+                            <span th:if="${followUp.lead == null}" class="text-muted">None</span>
+                        </dd>
+
+                        <dt class="col-sm-4 text-muted">Assigned To:</dt>
+                        <dd class="col-sm-8" th:text="${followUp.assignedTo != null ? followUp.assignedTo.fullName : 'Unassigned'}">Sales</dd>
+
+                        <dt class="col-sm-4 text-muted">Created Date:</dt>
+                        <dd class="col-sm-8" th:text="${#temporals.format(followUp.createdDate, 'yyyy-MM-dd HH:mm')}">-</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

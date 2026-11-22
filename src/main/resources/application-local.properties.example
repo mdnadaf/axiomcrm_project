@@ -1,0 +1,12 @@
+# Copy this file to application-local.properties and fill in your local MySQL credentials
+spring.datasource.url=jdbc:mysql://localhost:3306/acxiomcrm_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+spring.datasource.username=root
+spring.datasource.password=your_mysql_password_here
+
+# JWT Secret (min 256 bits, base64 or hex)
+app.jwt.secret=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+app.jwt.expiration-ms=86400000
+
+# Security policy
+app.security.max-failed-attempts=5
+app.security.lockout-duration-minutes=15

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${opportunityId != null ? 'Edit Opportunity' : 'New Opportunity'} + ' - AcxiomCRM'">Opportunity Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container py-4 flex-grow-1">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h4 class="mb-0 fw-bold" th:text="${opportunityId != null ? 'Edit Opportunity' : 'Create New Opportunity'}">Opportunity Form</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="${opportunityId != null ? '/opportunities/' + opportunityId + '/edit' : '/opportunities'}"
+                          th:object="${opportunityForm}" method="post" class="needs-validation" novalidate>
+
+                        <!-- Global form error message -->
+                        <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}">
+                            <span th:each="err : ${#fields.globalErrors()}" th:text="${err}">Error</span>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="name" class="form-label">Opportunity Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" th:field="*{name}" required placeholder="Enterprise CRM Cloud Subscription">
+                                <div class="invalid-feedback">Opportunity Name is required.</div>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="customerId" class="form-label">Customer <span class="text-danger">*</span></label>
+                                <select class="form-select" id="customerId" th:field="*{customerId}" required>
+                                    <option value="">-- Select Customer --</option>
+                                    <option th:each="c : ${customers}" th:value="${c.id}" th:text="${c.name} + ' (' + ${c.customerCode} + ')'"></option>
+                                </select>
+                                <div class="invalid-feedback">Customer is required.</div>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('customerId')}" th:errors="*{customerId}"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="leadId" class="form-label">Associated Lead (Optional)</label>
+                                <select class="form-select" id="leadId" th:field="*{leadId}">
+                                    <option value="">-- None --</option>
+                                    <option th:each="l : ${leads}" th:value="${l.id}" th:text="${l.name} + ' (' + ${l.leadCode} + ')'"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="stage" class="form-label">Pipeline Stage <span class="text-danger">*</span></label>
+                                <select class="form-select" id="stage" th:field="*{stage}" required>
+                                    <option th:each="st : ${stages}" th:value="${st}" th:text="${st}"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="amount" class="form-label">Opportunity Amount ($) <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" min="0.01" class="form-control" id="amount" th:field="*{amount}" required placeholder="10000.00">
+                                <div class="invalid-feedback">Opportunity Amount must be greater than 0.</div>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="probability" class="form-label">Win Probability (% 0-100) <span class="text-danger">*</span></label>
+                                <input type="number" min="0" max="100" class="form-control" id="probability" th:field="*{probability}" required placeholder="50">
+                                <div class="invalid-feedback">Probability must be between 0 and 100.</div>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('probability')}" th:errors="*{probability}"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="expectedCloseDate" class="form-label">Expected Close Date</label>
+                                <input type="date" class="form-control" id="expectedCloseDate" th:field="*{expectedCloseDate}">
+                                <div class="invalid-feedback">Expected Close Date cannot be in the past.</div>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('expectedCloseDate')}" th:errors="*{expectedCloseDate}"></div>
+                            </div>
+
+                            <div class="col-md-6" sec:authorize="hasAnyRole('ADMIN','MANAGER')">
+                                <label for="assignedToId" class="form-label">Owner / Assigned To</label>
+                                <select class="form-select" id="assignedToId" th:field="*{assignedToId}">
+                                    <option value="">-- Select Sales Executive --</option>
+                                    <option th:each="u : ${salesUsers}" th:value="${u.id}" th:text="${u.fullName}"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="description" class="form-label">Description & Opportunity Notes</label>
+                                <textarea class="form-control" id="description" th:field="*{description}" rows="3" placeholder="Opportunity scope, proposal terms..."></textarea>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a th:href="@{/opportunities}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                                <i class="bi bi-save me-1"></i>Save Opportunity
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
